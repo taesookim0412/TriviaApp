@@ -2,7 +2,7 @@ package com.example.triviaapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.triviaapp.schemas.Trivia.TriviaPointsDatabase
+import androidx.fragment.app.Fragment
 import com.example.triviaapp.schemas.Trivia.TriviaPointsRepository
 
 class MainActivity : AppCompatActivity() {
@@ -10,7 +10,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         TriviaPointsDatabase.getInstance(applicationContext)
         TriviaPointsDatabase.getTriviaPointsDao(applicationContext)
-        setContentView(R.layout.activity_main)
         TriviaPointsRepository().populateOrVerifyDb(arrayOf("Category1", "Category2", "Category3"))
+        setContentView(R.layout.activity_main)
+        loadFragment(AllTrivias())
+
+    }
+
+    private fun loadFragment(fragment: Fragment){
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.root_layout, fragment)
+        transaction.disallowAddToBackStack()
+        transaction.commit()
     }
 }

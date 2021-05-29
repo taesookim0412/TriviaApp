@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<FrameLayout
+    android:id="@+id/all_trivias_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.AllTrivias">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trivia_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>
+</layout>
