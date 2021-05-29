@@ -6,7 +6,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TriviaPointsRepository {
-    private val triviaPointsDao:TriviaPointsDao = TriviaPointsDatabase.triviaPointsDao;
+    private val triviaPointsDao:TriviaPointsDao = TriviaPointsDatabase.triviaPointsDao
 
     init{
 

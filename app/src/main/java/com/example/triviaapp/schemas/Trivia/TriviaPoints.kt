@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class TriviaPoints (
     @PrimaryKey(autoGenerate = true) val id: Long?,
     @ColumnInfo(name = "category") val category: String?,
-    @ColumnInfo(name = "correct_answer") val points: Long?
+    @ColumnInfo(name = "points") val points: Long?
 ){
     constructor(category: String?):
             this(null, category, 0)
