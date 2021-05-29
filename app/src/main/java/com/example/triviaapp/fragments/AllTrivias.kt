@@ -12,12 +12,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.triviaapp.R
 import com.example.triviaapp.adapters.TriviaAdapter
+import com.example.triviaapp.api.TriviaViewModel
 import com.example.triviaapp.databinding.FragmentAllTriviasBinding
 
 class AllTrivias : Fragment() {
 
     private lateinit var fragmentBinding: FragmentAllTriviasBinding;
-//    private val triviaViewModel by activityViewModels<TriviaViewModel>()
+    private val triviaViewModel by activityViewModels<TriviaViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,7 +34,7 @@ class AllTrivias : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(context)
-        val viewAdapter = TriviaAdapter()
+        val viewAdapter = TriviaAdapter(this)
         fragmentBinding.triviaRecyclerview.apply{
             setHasFixedSize(true)
 
@@ -41,7 +42,9 @@ class AllTrivias : Fragment() {
 
             adapter = viewAdapter
         }
-//        triviaViewModel.
+        triviaViewModel.getRandom50Questions.observe(viewLifecycleOwner) { trivias ->
+            trivias?.let{ viewAdapter.setTrivias(it) }
+        }
 //        alarmViewModel.allAlarmsSorted?.observe(viewLifecycleOwner, Observer { alarms ->
 //            alarms?.let{ viewAdapter.setAlarms(it) }
 //            Log.d("alarms", alarms.toString())

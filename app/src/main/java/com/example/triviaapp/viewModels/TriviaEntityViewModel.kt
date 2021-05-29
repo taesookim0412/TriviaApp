@@ -1,9 +1,9 @@
 package com.example.triviaapp.viewModels
 
 import androidx.lifecycle.ViewModel
-import com.example.triviaapp.data.Trivia
+import com.example.triviaapp.api.TriviaResultsResponse
 
-class TriviaEntityViewModel(trivia: Trivia): ViewModel() {
+class TriviaEntityViewModel(trivia: TriviaResultsResponse): ViewModel() {
     var question = ""
     var answer1 = ""
     var answer2 = ""

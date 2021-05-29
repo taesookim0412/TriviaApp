@@ -36,6 +36,11 @@ class TriviaViewModel(application: Application): AndroidViewModel(application) {
 
         emit(categoriesFromApi);
     }
+    val getRandom50Questions = liveData {
+        val data = apiRepository.get50CustomQuestions("","","")
+        //TODO store into room (fin?)
+        emit(data);
+    }
 }
 //    val getCategoriesFromAPI = liveData {
 //        val data = apiRepository.getCategories()
