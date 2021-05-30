@@ -22,6 +22,9 @@ interface TriviaPointsDao {
     @Query("SELECT * from triviapoints WHERE id = :id LIMIT 1")
     suspend fun findById(id:Long?): TriviaPoints
 
+    @Query("SELECT * from triviapoints WHERE apiId = :apiId LIMIT 1")
+    suspend fun findByApiId(apiId:Long?): TriviaPoints
+
     @Query("SELECT * from triviapoints WHERE category = :category LIMIT 1")
     suspend fun findByCategory(category:String?): TriviaPoints
 

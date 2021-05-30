@@ -5,11 +5,15 @@ import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import androidx.lifecycle.*
+import com.example.triviaapp.schemas.Trivia.TriviaPointsRepository
 /*import com.allydev.ally.schemas.trivia.categories.TriviaCategoriesRepository*/
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TriviaViewModel(application: Application): AndroidViewModel(application) {
+    var initial_state = true
+    var trivias = mutableListOf<TriviaResultsResponse>()
+
     val sharedPref =
         getApplication<Application>().getSharedPreferences("triviaSettings", MODE_PRIVATE)
 /*    var categorySetting: MutableLiveData<String?> = MutableLiveData<String?>().apply {
@@ -24,6 +28,7 @@ class TriviaViewModel(application: Application): AndroidViewModel(application) {
 
     // API
     val apiRepository: TriviaAPIRepository = TriviaAPIRepository()
+    val dbRepository: TriviaPointsRepository = TriviaPointsRepository()
 
     //Handle errors in the function?
     val oneQuestion: LiveData<TriviaDataResponse?> = liveData {
@@ -36,10 +41,18 @@ class TriviaViewModel(application: Application): AndroidViewModel(application) {
 
         emit(categoriesFromApi);
     }
-    val getRandom50Questions = liveData {
+    val get50RandomQuestions = liveData {
         val data = apiRepository.get50CustomQuestions("","","")
         //TODO store into room (fin?)
         emit(data);
+    }
+    fun get50CategoryQuestions(categoryApiId:String): LiveData<MutableList<TriviaResultsResponse>?> {
+        return liveData {
+            val data = apiRepository.get50CustomQuestions(categoryApiId,"","")
+            //TODO store into room (fin?)
+            this@TriviaViewModel.trivias = data!!
+            emit(data);
+        }
     }
 }
 //    val getCategoriesFromAPI = liveData {

@@ -10,17 +10,17 @@ import retrofit2.http.Query
 // Parent class
 data class TriviaDataResponse(
     val response_code: Int,
-    val results: Array<TriviaResultsResponse>
+    val results: MutableList<TriviaResultsResponse>
 )
 
-//Results array
+//Results List
 data class TriviaResultsResponse(
-    val category:String,
-    val type:String,
-    val difficulty:String,
-    val question:String,
-    val correct_answer:String,
-    val incorrect_answers: Array<String>
+    val category:String = "",
+    val type:String = "",
+    val difficulty:String = "",
+    val question:String = "",
+    val correct_answer:String = "",
+    val incorrect_answers: Array<String> = arrayOf("", "", "")
 )
 
 //API response

@@ -1,12 +1,8 @@
 package com.example.triviaapp.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.findFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.triviaapp.R
 import com.example.triviaapp.api.TriviaResultsResponse
@@ -14,12 +10,11 @@ import com.example.triviaapp.databinding.RecyclerviewTriviaRowBinding
 import com.example.triviaapp.fragments.AllTrivias
 import com.example.triviaapp.fragments.TriviaEntity
 import com.example.triviaapp.viewModels.TriviaEntityViewModel
-import kotlin.math.log
 
 class TriviaAdapter(val fragment:AllTrivias) : RecyclerView.Adapter<TriviaAdapter.TriviaViewHolder>() {
-    private var trivias = emptyArray<TriviaResultsResponse>()
+    private var trivias = emptyList<TriviaResultsResponse>()
 
-    class TriviaViewHolder(val binding: com.example.triviaapp.databinding.RecyclerviewTriviaRowBinding) :
+    class TriviaViewHolder(val binding: RecyclerviewTriviaRowBinding) :
         RecyclerView.ViewHolder(binding.root)
 
 
@@ -49,19 +44,28 @@ class TriviaAdapter(val fragment:AllTrivias) : RecyclerView.Adapter<TriviaAdapte
     override fun onBindViewHolder(holder: TriviaViewHolder, position: Int) {
         val trivia = trivias[position]
         holder.itemView.tag = trivia
-        val viewModel = TriviaEntityViewModel(trivia)
-        holder.binding.viewModel = viewModel
+        //collisions
+//        fragment.triviaEntityViewModel.setTrivia(trivia)
+//        holder.binding.viewModel = fragment.triviaEntityViewModel
+        val triviaEntityViewModel = TriviaEntityViewModel()
+        triviaEntityViewModel.setTrivia(trivia)
+        holder.binding.viewModel = triviaEntityViewModel
         holder.binding.root.setOnClickListener {
-            loadFragment(fragment, TriviaEntity(viewModel))
+            loadFragment(fragment, TriviaEntity(), trivia)
         }
     }
 
-    internal fun setTrivias(trivias: Array<TriviaResultsResponse>) {
+    internal fun setTrivias(trivias: List<TriviaResultsResponse>) {
         this.trivias = trivias
         notifyDataSetChanged()
     }
 
-    private fun loadFragment(srcFragment:Fragment, destFragment: Fragment){
+    private fun loadFragment(
+        srcFragment: AllTrivias,
+        destFragment: TriviaEntity,
+        trivia: TriviaResultsResponse
+    ){
+        srcFragment.triviaEntityViewModel.setTrivia(trivia)
         val transaction = srcFragment.activity?.supportFragmentManager?.beginTransaction()
         transaction?.replace(R.id.root_layout, destFragment)
         transaction?.addToBackStack("allTrivias")

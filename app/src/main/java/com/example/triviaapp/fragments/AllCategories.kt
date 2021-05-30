@@ -10,22 +10,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.triviaapp.R
-import com.example.triviaapp.adapters.TriviaAdapter
+import com.example.triviaapp.adapters.CategoryAdapter
 import com.example.triviaapp.api.TriviaViewModel
-import com.example.triviaapp.databinding.FragmentAllTriviasBinding
+import com.example.triviaapp.databinding.FragmentAllCategoriesBinding
 import com.example.triviaapp.viewModels.CategoryEntityViewModel
-import com.example.triviaapp.viewModels.TriviaEntityViewModel
 
-class AllTrivias(val categoryEntityViewModel: CategoryEntityViewModel = CategoryEntityViewModel(0,"",0) ) : Fragment() {
+class AllCategories : Fragment() {
 
-    private lateinit var fragmentBinding: FragmentAllTriviasBinding;
+    private lateinit var fragmentBinding: FragmentAllCategoriesBinding;
     private val triviaViewModel by activityViewModels<TriviaViewModel>()
-    val triviaEntityViewModel: TriviaEntityViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding:FragmentAllTriviasBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_all_trivias, container, false)
+        val binding:FragmentAllCategoriesBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_all_categories, container, false)
         // Inflate the layout for this fragment
         val activity = activity as AppCompatActivity
         activity.supportActionBar?.show()
@@ -36,21 +34,17 @@ class AllTrivias(val categoryEntityViewModel: CategoryEntityViewModel = Category
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(context)
-        val viewAdapter = TriviaAdapter(this)
-        fragmentBinding.triviaRecyclerview.apply{
+        val viewAdapter = CategoryAdapter(this)
+        fragmentBinding.categoryRecyclerview.apply{
             setHasFixedSize(true)
 
             layoutManager = viewManager
 
             adapter = viewAdapter
         }
-        if (triviaViewModel.trivias.size == 0 || categoryEntityViewModel.category != triviaViewModel.trivias[0].category){
-            triviaViewModel.get50CategoryQuestions(categoryEntityViewModel.apiIdStr).observe(viewLifecycleOwner) { trivias ->
-                trivias?.let{ viewAdapter.setTrivias(it) }
-            }
-        }
-        else{
-            viewAdapter.setTrivias(triviaViewModel.trivias)
+        // get db values every creation
+        triviaViewModel.dbRepository.getCategoriesFromDb().observe(viewLifecycleOwner) { categories ->
+            categories?.let{ viewAdapter.setCategories(it) }
         }
 //        alarmViewModel.allAlarmsSorted?.observe(viewLifecycleOwner, Observer { alarms ->
 //            alarms?.let{ viewAdapter.setAlarms(it) }

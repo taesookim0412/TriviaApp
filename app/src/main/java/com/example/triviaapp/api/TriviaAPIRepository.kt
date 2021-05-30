@@ -3,6 +3,7 @@ package com.example.triviaapp.api
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.util.Log
 import com.example.triviaapp.api.base.BaseAPIRepository
+import com.example.triviaapp.utils.DecodeHtml
 import retrofit2.Response
 import retrofit2.Retrofit
 
@@ -18,9 +19,8 @@ class TriviaAPIRepository():  BaseAPIRepository() {
     suspend fun getApiToken() = attemptQueryOrCancel({apiService.getApiToken()})
 
     //empty param = random
-    suspend fun get50CustomQuestions(category:String, difficulty: String, type: String): Array<TriviaResultsResponse>? /* :List<TriviaDataResponse>?*/
+    suspend fun get50CustomQuestions(category:String, difficulty: String, type: String): MutableList<TriviaResultsResponse>? /* :List<TriviaDataResponse>?*/
     {
-        Log.d("Here", "Here")
         val response:TriviaDataResponse?  = attemptQueryOrCancel({apiService.get50CustomQuestions(category, difficulty, type)})
         val responseResults = parseResults(response)
 
@@ -31,8 +31,21 @@ class TriviaAPIRepository():  BaseAPIRepository() {
     }
 
     //helper method
-    suspend fun parseResults(response: TriviaDataResponse?): Array<TriviaResultsResponse>?{
-        Log.d("Parsing", "Parsing")
-        return response?.results
+    //cleanse
+    suspend fun parseResults(response: TriviaDataResponse?): MutableList<TriviaResultsResponse>?{
+        var res = mutableListOf<TriviaResultsResponse>()
+
+        for (triviaResponse in response?.results!!){
+            val cleansed_incorrect_answers = triviaResponse.incorrect_answers.map { incorrect_answer -> DecodeHtml.decode(incorrect_answer) }.toTypedArray()
+            val cleansedResponse = TriviaResultsResponse(
+                DecodeHtml.decode(triviaResponse.category),
+                DecodeHtml.decode(triviaResponse.type),
+                DecodeHtml.decode(triviaResponse.difficulty),
+                DecodeHtml.decode(triviaResponse.question),
+                DecodeHtml.decode(triviaResponse.correct_answer),
+                cleansed_incorrect_answers)
+            res.add(cleansedResponse)
+        }
+        return res
     }
 }
