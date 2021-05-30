@@ -1,5 +1,6 @@
 package com.example.triviaapp.schemas.Trivia
 
+import com.example.triviaapp.api.TriviaCategoryResultsResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,19 +13,23 @@ class TriviaPointsRepository {
 
     }
 
-    fun populateOrVerifyDb(apiCategories: Array<String>){
+    fun populateOrVerifyDb(apiCategories: Array<TriviaCategoryResultsResponse>){
         CoroutineScope(Dispatchers.IO).launch{
             withContext(Dispatchers.IO){
                 val categoriesFromDb = triviaPointsDao.findAll()
-                val categoriesFromDbSet:MutableSet<String> = mutableSetOf()
-                //Create a mutable set of categories in the room database
+                val categoriesFromDbMap:MutableMap<Long,String> = mutableMapOf()
+                //Create a mutable map of apiId to category string in the room database
                 for (categoryFromDb in categoriesFromDb){
-                    categoryFromDb.category?.let { categoriesFromDbSet.add(it) }
+                    categoryFromDb.let { it.apiId?.let { it1 -> it.category?.let { it2 ->
+                        categoriesFromDbMap.put(it1, it2)
+                    } } }
                 }
                 // verify every api category has a database entity
                 for (apiCategory in apiCategories){
-                    if (!(categoriesFromDbSet.contains(apiCategory))){
-                        triviaPointsDao.createTriviaPoints(TriviaPoints(apiCategory))
+                    val apiCategoryIdToLong = apiCategory.id.toLong()
+                    val dbStrForApiId = categoriesFromDbMap.get(apiCategoryIdToLong)
+                    if (dbStrForApiId == null || dbStrForApiId != apiCategory.name){
+                        triviaPointsDao.createTriviaPoints(TriviaPoints(apiCategoryIdToLong, apiCategory.name))
                     }
                 }
             }

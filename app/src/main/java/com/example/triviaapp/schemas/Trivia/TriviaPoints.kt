@@ -7,9 +7,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "triviapoints")
 data class TriviaPoints (
     @PrimaryKey(autoGenerate = true) val id: Long?,
+    @ColumnInfo(name = "apiId") val apiId: Long?,
     @ColumnInfo(name = "category") val category: String?,
     @ColumnInfo(name = "points") val points: Long?
 ){
-    constructor(category: String?):
-            this(null, category, 0)
+    constructor(apiId: Long, category: String?):
+            this(null, apiId, category, 0)
 }
