@@ -13,6 +13,9 @@ interface TriviaPointsDao {
     @Delete
     suspend fun deleteTriviaPoints(triviaPoints: TriviaPoints)
 
+    @Query("DELETE FROM triviapoints WHERE apiId = :apiId")
+    suspend fun deleteTriviaPointByApiId(apiId:Long?)
+
     @Query("SELECT * from triviapoints")
     suspend fun findAll(): List<TriviaPoints>
 

@@ -28,7 +28,15 @@ class TriviaPointsRepository {
                 for (apiCategory in apiCategories){
                     val apiCategoryIdToLong = apiCategory.id.toLong()
                     val dbStrForApiId = categoriesFromDbMap.get(apiCategoryIdToLong)
-                    if (dbStrForApiId == null || dbStrForApiId != apiCategory.name){
+                    // if db has no entity with api id
+                    if (dbStrForApiId == null){
+                        triviaPointsDao.createTriviaPoints(TriviaPoints(apiCategoryIdToLong, apiCategory.name))
+                    }
+                    // else if there is a collision : the lookup by api id gave inconsistent string results.
+                    else if (dbStrForApiId != apiCategory.name){
+                        //delete the db entity by api Id and recreate it,,,
+                        //TODO: Test delete query
+                        triviaPointsDao.deleteTriviaPointByApiId(apiCategoryIdToLong)
                         triviaPointsDao.createTriviaPoints(TriviaPoints(apiCategoryIdToLong, apiCategory.name))
                     }
                 }
